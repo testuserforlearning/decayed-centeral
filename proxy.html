@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Proxy</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: white;
+        }
+        .proxy-frame {
+            width: 100%;
+            height: calc(100vh - 100px);
+            border: none;
+            background: white;
+        }
+        .url-bar {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #333;
+            background: #2a2a2a;
+            color: white;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <input type="text" class="url-bar" id="urlBar" placeholder="Enter URL to proxy..." value="https://discord.com">
+    <button onclick="loadUrl()">Load</button>
+    <iframe class="proxy-frame" id="proxyFrame" sandbox="allow-scripts allow-forms allow-popups allow-modals allow-top-navigation allow-same-origin"></iframe>
+    
+    <script>
+        function loadUrl() {
+            const url = document.getElementById('urlBar').value;
+            const frame = document.getElementById('proxyFrame');
+            frame.src = url;
+        }
+        
+        // Load initial URL
+        window.onload = function() {
+            loadUrl();
+        };
+    </script>
+</body>
+</html>

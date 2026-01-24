@@ -1,0 +1,14 @@
+{
+  "routes": [
+    {
+      "pattern": "*://*/*",
+      "target": "scramjet",
+      "priority": 1
+    }
+  ],
+  "settings": {
+    "encodeUrl": true,
+    "prefix": "/scramjet/",
+    "defaultTransport": "epoxy"
+  }
+}

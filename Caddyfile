@@ -1,74 +1,115 @@
 {
-	admin off
-	auto_https off
-	servers {
-		listen :80
-		listen :443
-	}
-}
-
-:80 {
-	root * /usr/share/caddy/public
-	try_files {path} {path}.html {path}/index.html /index.html
-
-	handle /api/* {
-		reverse_proxy localhost:3000
-	}
-
-	handle /* {
-		reverse_proxy localhost:3000
-	}
-
-	header {
-		Access-Control-Allow-Origin "*"
-		Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
-		Access-Control-Allow-Headers "Content-Type, Authorization"
-		Access-Control-Allow-Credentials "true"
-	}
-
-	handle /sw.js {
-		header {
-			Content-Type "application/javascript"
-			Cache-Control "no-cache, no-store, must-revalidate"
-		}
-		reverse_proxy localhost:3000
-	}
-
-	handle /tinyjet/* {
-		reverse_proxy localhost:3000
-	}
-
-	handle /bareworker.js {
-		header {
-			Content-Type "application/javascript"
-			Service-Worker-Allowed "/"
-		}
-		reverse_proxy localhost:3000
-	}
-
-	handle /scramjet/* {
-		reverse_proxy localhost:3000
-	}
-
-	header {
-		X-Frame-Options "ALLOW-FROM *"
-		X-Content-Type-Options "nosniff"
-		Referrer-Policy "strict-origin-when-cross-origin"
-		Permissions-Policy "geolocation=(), microphone=(), camera=()"
-	}
+    email oscisadev@gmail.com
 }
 
 education.opensourcedtech.com {
-     root * /usr/share/caddy/public
-     try_files {path} {path}.html {path}/index.html /index.html
-     
-     handle /api/* {
-         reverse_proxy localhost:3000
-     }
-     
-     handle /* {
-         reverse_proxy localhost:3000
-     }
-     
-     tls your@email.com
- }
+    header {
+        Access-Control-Allow-Origin "*"
+        Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+        Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+        Access-Control-Allow-Credentials "true"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Service-Worker-Allowed "/"
+    }
+    
+    @options method OPTIONS
+    respond @options 204
+    
+    root * /var/www/notixl
+    
+    @js {
+        path *.js
+    }
+    header @js Content-Type "application/javascript"
+    
+    @css {
+        path *.css
+    }
+    header @css Content-Type "text/css"
+    
+    @mjs {
+        path *.mjs
+    }
+    header @mjs Content-Type "application/javascript"
+    
+    handle /sw.js {
+        header {
+            Cache-Control "no-cache, no-store, must-revalidate"
+            Service-Worker-Allowed "/"
+            Content-Type "application/javascript"
+        }
+        file_server
+    }
+    
+    handle /bareworker.js {
+        header {
+            Cache-Control "no-cache, no-store, must-revalidate"
+            Service-Worker-Allowed "/"
+            Content-Type "application/javascript"
+        }
+        file_server
+    }
+    
+    handle /tinyjet/* {
+        header {
+            Cache-Control "public, max-age=31536000"
+        }
+        file_server
+    }
+    
+    handle /scramjet/* {
+        header {
+            Access-Control-Allow-Origin "*"
+            Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+            Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+            Access-Control-Allow-Credentials "true"
+        }
+        
+        # Set proper MIME types for proxied static assets
+        @scramjet_css {
+            path *.css
+        }
+        header @scramjet_css Content-Type "text/css"
+        
+        @scramjet_js {
+            path *.js
+        }
+        header @scramjet_js Content-Type "application/javascript"
+        
+        reverse_proxy {path.2} {
+            header_up Host {http.reverse_proxy.upstream.hostport}
+            header_up X-Real-IP {http.request.remote_host}
+            header_up X-Forwarded-For {http.request.remote_host}
+            header_up X-Forwarded-Proto {http.request.scheme}
+        }
+    }
+    
+    handle {
+        try_files {path} {path}.html /index.html
+        
+        @static {
+            path *.css *.js *.ico *.png *.jpg *.jpeg *.gif *.svg *.woff *.woff2
+        }
+        header @static Cache-Control "public, max-age=31536000"
+        
+        @html {
+            path *.html
+        }
+        header @html Cache-Control "no-cache, no-store, must-revalidate"
+        
+        file_server
+    }
+    
+    encode gzip zstd
+    
+    log {
+        output file /var/log/caddy/notixl.log {
+            roll_size 100mb
+            roll_keep 5
+        }
+        format json
+    }
+}

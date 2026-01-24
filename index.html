@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>notixl</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="/favicon.ico">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/soap-phia/tinyjet@latest/tinyjet/scramjet.all.js" defer></script>
+    <script type="module" defer>
+        import * as BareMux from "https://cdn.jsdelivr.net/npm/@mercuryworkshop/bare-mux/dist/index.mjs";
+        window.BareMux = BareMux;
+    </script>
+</head>
+<body>
+    <div id="app">
+        <div class="browser-window">
+            <div class="tab-bar">
+                <div class="tab-bar-content">
+                    <button class="tab-button new-tab-btn" title="New Tab">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                    </button>
+                    <div class="tabs-container" id="tabsContainer">
+                    </div>
+                </div>
+            </div>
+
+            <div class="navigation-bar">
+                <div class="navigation-content">
+                    <div class="navigation-buttons">
+                        <button class="nav-button" title="Back" id="backBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
+                        </button>
+                        <button class="nav-button" title="Forward" id="forwardBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                        <button class="nav-button" title="Refresh" id="refreshBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <form class="url-form" id="urlForm">
+                        <input 
+                            type="text" 
+                            class="url-input" 
+                            id="urlInput"
+                            placeholder="Search or enter a URL"
+                            autocomplete="off"
+                        />
+                    </form>
+
+                    <button class="nav-button" title="More options" id="moreBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="1"></circle>
+                            <circle cx="12" cy="5" r="1"></circle>
+                            <circle cx="12" cy="19" r="1"></circle>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="clock-container">
+                        <div class="clock" id="clock">--:--</div>
+                    </div>
+                </div>
+                <div class="math-container" id="mathContainer" style="display: none;">
+                    <button class="open-new-tab-btn" id="openNewTabBtn" title="Open in new tab">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                            <polyline points="15,3 21,3 21,9"></polyline>
+                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                        </svg>
+                    </button>
+                    <iframe 
+                        class="math-frame" 
+                        id="mathFrame"
+                        sandbox="allow-scripts allow-forms allow-popups allow-modals allow-top-navigation allow-same-origin"
+                        title="Math Frame"
+                    ></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js" type="module"></script>
+    <script>
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+                .then((registration) => {
+                    console.log('Service Worker registered:', registration);
+                })
+                .catch((error) => {
+                    console.error('Service Worker registration failed:', error);
+                });
+        }
+    </script>
+</body>
+</html>
